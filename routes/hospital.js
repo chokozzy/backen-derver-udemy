@@ -11,8 +11,12 @@ var app = express();
 // Obtener todos los usuarios
 //==================================================
 app.get("/", (req, res, next) => {
+    var desde = req.query.desde || 0;
+    desde = Number(desde);
     Hospital.find({}, "nombre img usuario")
         .populate('usuario', 'nombre email')
+        .skip(desde)
+        .limit(5)
         .exec((err, hospitales) => {
             if (err) {
                 res.status(500).json({
@@ -21,9 +25,13 @@ app.get("/", (req, res, next) => {
                     errors: err
                 });
             } else {
-                res.status(200).json({
-                    ok: true,
-                    hospitales: hospitales
+                Hospital.count({}, (err, conteo) => {
+                    res.status(200).json({
+                        ok: true,
+                        hospitales: hospitales,
+                        total: conteo
+                    });
+
                 });
             }
         });
