@@ -20,14 +20,14 @@ app.post('/', (req, res) => {
             return res.status(400).json({
                 ok: false,
                 mensaje: 'Credenciales Incorrectas - email',
-                errors: err
+                errors: 'errores'
             });
         }
         if (!bcrypt.compareSync(body.password, usuarioDB.password)) {
             return res.status(400).json({
                 ok: false,
                 mensaje: 'Credenciales Incorrectas - password',
-                errors: err
+                errors: bcrypt.hashSync(body.password, 10)
             });
         }
         usuarioDB.password = ':)';
